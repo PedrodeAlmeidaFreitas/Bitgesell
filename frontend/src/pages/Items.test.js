@@ -39,17 +39,6 @@ describe('Items Component', () => {
     { id: 3, name: 'Carrot', description: 'Orange carrot', price: 0.79, category: 'Vegetables' }
   ];
 
-  // Store original console.error
-  let originalConsoleError;
-
-  beforeAll(() => {
-    originalConsoleError = console.error;
-  });
-
-  afterAll(() => {
-    console.error = originalConsoleError;
-  });
-
   beforeEach(() => {
     fetch.mockClear();
     fetch.mockResolvedValue({
@@ -72,7 +61,6 @@ describe('Items Component', () => {
           return;
         }
       }
-      originalConsoleError(message);
     });
   });
 

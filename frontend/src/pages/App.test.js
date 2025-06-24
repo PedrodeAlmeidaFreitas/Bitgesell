@@ -18,16 +18,6 @@ jest.mock('react-window', () => ({
 }));
 
 describe('App Component', () => {
-  // Store original console.error
-  let originalConsoleError;
-
-  beforeAll(() => {
-    originalConsoleError = console.error;
-  });
-
-  afterAll(() => {
-    console.error = originalConsoleError;
-  });
 
   beforeEach(() => {
     fetch.mockClear();
@@ -53,7 +43,6 @@ describe('App Component', () => {
           return;
         }
       }
-      originalConsoleError(message);
     });
   });
 

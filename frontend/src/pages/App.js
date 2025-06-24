@@ -1,20 +1,22 @@
-import React from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
-import Items from './Items';
-import ItemDetail from './ItemDetail';
+import { Link, Route, Routes } from 'react-router-dom';
 import { DataProvider } from '../state/DataContext';
+import { ThemeProvider } from '../state/ThemeContext';
+import ItemDetail from './ItemDetail';
+import Items from './Items';
 
 function App() {
   return (
-    <DataProvider>
-      <nav style={{padding: 16, borderBottom: '1px solid #ddd'}}>
-        <Link to="/">Items</Link>
-      </nav>
-      <Routes>
-        <Route path="/" element={<Items />} />
-        <Route path="/items/:id" element={<ItemDetail />} />
-      </Routes>
-    </DataProvider>
+    <ThemeProvider>
+      <DataProvider>
+        <nav className="nav">
+          <Link to="/">Items</Link>
+        </nav>
+        <Routes>
+          <Route path="/" element={<Items />} />
+          <Route path="/items/:id" element={<ItemDetail />} />
+        </Routes>
+      </DataProvider>
+    </ThemeProvider>
   );
 }
 

@@ -27,23 +27,6 @@ describe('App Component', () => {
         { id: 2, name: 'Test Item 2' }
       ])
     });
-    
-    // Mock console.error to suppress expected error messages and act warnings
-    console.error = jest.fn((message) => {
-      // Suppress React act warnings and expected errors
-      if (typeof message === 'string' && 
-          (message.includes('Warning: An update to DataProvider inside a test was not wrapped in act') ||
-           message.includes('Warning: The current testing environment is not configured to support act'))) {
-        return;
-      }
-      // For objects (like React warnings), check if they contain act warnings
-      if (typeof message === 'object' && message?.toString) {
-        const messageStr = message.toString();
-        if (messageStr.includes('act') || messageStr.includes('DataProvider')) {
-          return;
-        }
-      }
-    });
   });
 
   test('renders navigation and routes correctly', () => {

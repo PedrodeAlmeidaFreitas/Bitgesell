@@ -1,12 +1,20 @@
-import PropTypes from 'prop-types';
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import PropTypes from "prop-types";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 const DataContext = createContext();
 
 export const useData = () => {
   const context = useContext(DataContext);
   if (!context) {
-    throw new Error('useData must be used within a DataProvider');
+    throw new Error("useData must be used within a DataProvider");
   }
   return context;
 };
@@ -22,39 +30,39 @@ export const DataProvider = ({ children }) => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
-    
+
     // Create a new controller for this request
     const controller = new AbortController();
     abortControllerRef.current = controller;
-    
+
     // Use the provided signal or our controller's signal
     const requestSignal = signal || controller.signal;
-    
+
     setLoading(true);
-    
+
     try {
       // Build query string from options
       const params = new URLSearchParams();
-      if (options.limit !== undefined) params.append('limit', options.limit);
-      if (options.offset !== undefined) params.append('offset', options.offset);
-      if (options.q !== undefined) params.append('q', options.q);
-      
+      if (options.limit !== undefined) params.append("limit", options.limit);
+      if (options.offset !== undefined) params.append("offset", options.offset);
+      if (options.q !== undefined) params.append("q", options.q);
+
       const queryString = params.toString();
       const url = `http://localhost:3001/api/items?${queryString}`;
-      
+
       const response = await fetch(url, { signal: requestSignal });
-      
+
       // Handle both real fetch responses and test mocks
       if (response.ok === false) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setItems(data);
     } catch (error) {
       // Don't update items on error (including abort errors)
-      if (error.name !== 'AbortError') {
-        console.error('Failed to fetch items:', error);
+      if (error.name !== "AbortError") {
+        console.error("Failed to fetch items:", error);
       }
     } finally {
       setLoading(false);
@@ -62,9 +70,9 @@ export const DataProvider = ({ children }) => {
   }, []);
 
   const addSelectedItem = useCallback((item) => {
-    setSelectedItems(prev => {
+    setSelectedItems((prev) => {
       // Prevent duplicates
-      if (prev.find(selected => selected.id === item.id)) {
+      if (prev.find((selected) => selected.id === item.id)) {
         return prev;
       }
       return [...prev, item];
@@ -72,7 +80,7 @@ export const DataProvider = ({ children }) => {
   }, []);
 
   const removeSelectedItem = useCallback((id) => {
-    setSelectedItems(prev => prev.filter(item => item.id !== id));
+    setSelectedItems((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
   const clearSelectedItems = useCallback(() => {
@@ -83,31 +91,38 @@ export const DataProvider = ({ children }) => {
   useEffect(() => {
     const controller = new AbortController();
     fetchItems(controller.signal);
-    
+
     return () => {
       controller.abort();
     };
   }, [fetchItems]);
 
-  const value = useMemo(() => ({
-    items,
-    loading,
-    selectedItems,
-    fetchItems,
-    addSelectedItem,
-    removeSelectedItem,
-    clearSelectedItems
-  }), [items, loading, selectedItems, fetchItems, addSelectedItem, removeSelectedItem, clearSelectedItems]);
-
-  return (
-    <DataContext.Provider value={value}>
-      {children}
-    </DataContext.Provider>
+  const value = useMemo(
+    () => ({
+      items,
+      loading,
+      selectedItems,
+      fetchItems,
+      addSelectedItem,
+      removeSelectedItem,
+      clearSelectedItems,
+    }),
+    [
+      items,
+      loading,
+      selectedItems,
+      fetchItems,
+      addSelectedItem,
+      removeSelectedItem,
+      clearSelectedItems,
+    ]
   );
+
+  return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 };
 
 DataProvider.propTypes = {
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
 };
 
 export default { DataProvider, useData };
